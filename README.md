@@ -1,44 +1,25 @@
-███████╗██╗   ██╗██╗     ██╗         ███████╗████████╗ █████╗  ██████╗██╗  ██╗
-██╔════╝██║   ██║██║     ██║         ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-█████╗  ██║   ██║██║     ██║         ███████╗   ██║   ███████║██║     █████╔╝ 
-██╔══╝  ██║   ██║██║     ██║         ╚════██║   ██║   ██╔══██║██║     ██╔═██╗ 
-██║     ╚██████╔╝███████╗███████╗    ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-╚═╝      ╚═════╝ ╚══════╝╚══════╝    ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
-                      FULL-STACK ENGINEER • AI SYSTEMS ARCHITECT
-
-🌌 Full-Stack Engineer
-Создаю высоконагруженные web-сервисы, микросервисы на Python/Express, интеллектуальные AI-агенты и тщательно продуманные UI-системы.
-┌───────────────────────────────────────────────────────────────┐
-│                       🧠 SPECIALIZATION                        │
-└───────────────────────────────────────────────────────────────┘
-Backend
-Python: Django • DRF • Express
-PostgreSQL • Redis • Multi-DB • WebSockets
-API-контракты, строгая архитектура, продакшн-логика
-
-Frontend
-React • Vite • TypeScript
-TanStack Query • Jotai/Zustand
-Chakra-UI / Tailwind
-Собственный Design System: токены • темы • UX-паттерны
-
-DevOps
-Docker Compose • Nginx • Cloudflare Tunnels
-CI/CD (Gitlab Actions)
-Linux/Ubuntu deep-optimization
-
-┌───────────────────────────────────────────────────────────────┐
-│                         🛠 TECH STACK                          │
-└───────────────────────────────────────────────────────────────┘
-LANGUAGES:   Python • TypeScript • JavaScript • NodeJs
-BACKEND:     Django • DRF • FastAPI • Django
-FRONTEND:    React • Vite • Chakra-UI • Tailwind • Shadcn • RTK/RTK query • Zustand • Jotai • MobX • Redux
-DATABASE:    PostgreSQL • Redis
-DEVOPS:      Docker • Nginx • Cloudflare • Linux
-TOOLS:       Git • CI/CD • VSCode/PyCharm/Zed
-
-┌───────────────────────────────────────────────────────────────┐
-│                           📫 CONTACTS                          │
-└───────────────────────────────────────────────────────────────┘
-Telegram: @hristoforovia
-Email: khristoforov2008@gmail.com
+# 👨‍💻 Full-Stack Developer 
+Создаю масштабируемые web-сервисы, микросервисы и AI-агентов.  
+Работаю на стеке **Python, TypeScript**, проектируя архитектуру, API-контракты, флоу данных и продакшн-инфраструктуру.
+---
+## 🧠 Специализация
+- Архитектура микро- и мультисервисов  
+- Backend: Django • DRF • FastAPI   
+- Frontend: React • Vite • TS • Chakra-UI/Tailwind  
+- DevOps: Docker Compose • Nginx • Cloudflare  
+- Multi-DB схемы, PostgreSQL, Redis  
+- Очереди и фоновые задачи: Celery, Go-workers  
+---
+## 🛠 Технологии
+```
+Go • Python • TypeScript
+Django • DRF • FastAPI • React • Vite
+PostgreSQL • Redis • Docker • Nginx
+Linux • CI/CD • GitHub Actions
+```
+---
+## 📫 Контакты
+**Telegram:** @hristoforovia  
+**Email:** khristoforov2008@gmail.com  
+---
+### minimal. clean. consistent.
