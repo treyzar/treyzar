@@ -12,7 +12,7 @@
 ---
 ## 🛠 Технологии
 ```
-Go • Python • TypeScript
+Python • TypeScript
 Django • DRF • FastAPI • React • Vite
 PostgreSQL • Redis • Docker • Nginx
 Linux • CI/CD • GitHub Actions
