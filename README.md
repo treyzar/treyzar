@@ -5,7 +5,7 @@
 ## 🧠 Специализация
 - Архитектура микро- и мультисервисов  
 - Backend: Django • DRF • FastAPI   
-- Frontend: React • Vite • TS • Chakra-UI/Tailwind  
+- Frontend: React • Vite • Next.js • TS • Chakra-UI/Tailwind 
 - DevOps: Docker Compose • Nginx • Cloudflare  
 - Multi-DB схемы, PostgreSQL, Redis  
 - Очереди и фоновые задачи: Celery, Go-workers  
