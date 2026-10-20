@@ -4,10 +4,13 @@
 Чтобы поменять текст карточек или стек — правьте PROJECTS / STACK ниже.
 """
 
+import re
 from pathlib import Path
 from xml.sax.saxutils import escape
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
+# Иконки: icons/si — Simple Icons (CC0), icons/lu — Lucide (ISC).
+ICONS = Path(__file__).resolve().parent / "icons"
 
 THEMES = {
     "dark": {
@@ -100,6 +103,44 @@ STACK = [
     ("Инфра", ["Docker Compose", "Nginx", "Linux"]),
 ]
 
+# Иконка для каждой группы и технологии: "si/<slug>" или "lu/<slug>".
+GROUP_ICONS = {
+    "Язык": "lu/code-xml", "Web / API": "lu/globe", "Боты": "lu/bot", "Данные": "lu/database",
+    "Очереди": "lu/workflow", "Качество": "lu/shield-check", "Инфра": "lu/server",
+}
+TECH_ICONS = {
+    "Python 3.12": "si/python", "typing": "lu/type", "asyncio": "lu/zap",
+    "FastAPI": "si/fastapi", "Django": "si/django", "Django Ninja": "si/django", "DRF": "si/django",
+    "Pydantic": "si/pydantic", "aiogram 3": "si/telegram",
+    "PostgreSQL": "si/postgresql", "ClickHouse": "si/clickhouse", "Redis": "si/redis",
+    "SQLAlchemy 2": "si/sqlalchemy", "Alembic": "lu/layers",
+    "RabbitMQ": "si/rabbitmq", "Celery": "si/celery", "outbox": "lu/inbox", "DLQ": "lu/rotate-ccw",
+    "pytest": "si/pytest", "ruff": "si/ruff", "mypy": "lu/shield-check", "CI": "si/githubactions",
+    "Docker Compose": "si/docker", "Nginx": "si/nginx", "Linux": "si/linux",
+}
+
+ABOUT = {
+    "title": "Бэкенд, который доходит до прода",
+    "lines": [
+        "Python-разработчик. Делаю бэкенд коммерческих продуктов:",
+        "REST API, Telegram-боты, фоновые задачи и аналитику.",
+        "Проектирую схему данных и API-контракты, пишу тесты",
+        "и довожу сервисы до продакшна в Docker.",
+    ],
+    "facts": [
+        ("lu/briefcase", "ArtInTech · SMIP"),
+        ("lu/map-pin", "Чебоксары"),
+        ("lu/server", "Python backend"),
+        ("lu/zap", "3 коммерческих проекта"),
+    ],
+}
+
+CONTACTS = [  # (файл, иконка, подпись)
+    ("telegram", "si/telegram", "Telegram"),
+    ("email", "lu/mail", "Email"),
+    ("site", "lu/globe", "bresler.ru"),
+]
+
 
 # Анимации живут внутри SVG: GitHub проигрывает их и в <img>.
 # При prefers-reduced-motion всё замирает.
@@ -156,20 +197,39 @@ def text(x, y, s, size, fill, font=SANS, weight=400, anchor="start", spacing=0) 
     )
 
 
-def chips(x, y, items, t, size=15, gap=10, max_x=None) -> tuple[str, float]:
+def chips(x, y, items, t, size=15, gap=10, max_x=None, with_icons=True) -> tuple[str, float]:
     """Рисует ряд «чипов» и переносит их на новую строку при выходе за max_x."""
     out, cx, cy, h = [], x, y, size + 16
     for item in items:
-        w = len(item) * size * MONO_CHAR + 24
+        ic = TECH_ICONS.get(item) if with_icons else None
+        isz = size + 1
+        w = len(item) * size * MONO_CHAR + 24 + (isz + 8 if ic else 0)
         if max_x and cx + w > max_x:
             cx, cy = x, cy + h + gap
         out.append(
-            f'<rect x="{cx}" y="{cy}" width="{w:.0f}" height="{h}" rx="6" '
+            f'<rect x="{cx:.0f}" y="{cy}" width="{w:.0f}" height="{h}" rx="6" '
             f'fill="{t["chip"]}" stroke="{t["border"]}"/>'
         )
-        out.append(text(cx + 12, cy + h / 2 + size * 0.35, item, size, t["text"], MONO))
+        tx = cx + 12
+        if ic:
+            out.append(icon(ic, tx, cy + (h - isz) / 2, isz, t["muted"]))
+            tx += isz + 8
+        out.append(text(tx, cy + h / 2 + size * 0.35, item, size, t["text"], MONO))
         cx += w + gap
     return "".join(out), cy + h
+
+
+def icon(name: str, x, y, size, color) -> str:
+    """Встраивает иконку 24×24: Simple Icons заливкой, Lucide — обводкой."""
+    src = (ICONS / f"{name}.svg").read_text(encoding="utf-8")
+    inner = re.search(r"<svg[^>]*>(.*)</svg>", src, re.S).group(1)
+    inner = re.sub(r"<title>.*?</title>", "", inner).strip()
+    paint = (
+        f'fill="{color}"'
+        if name.startswith("si/")
+        else f'fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'
+    )
+    return f'<svg x="{x:.1f}" y="{y:.1f}" width="{size}" height="{size}" viewBox="0 0 24 24" {paint}>{inner}</svg>'
 
 
 def header(t) -> str:
@@ -237,7 +297,7 @@ def card(p, t) -> str:
     b.append(text(36, 98, p["title"], 34, t["text"], weight=700))
     for i, line in enumerate(p["lines"]):
         b.append(text(36, 140 + i * 28, line, 19, t["muted"]))
-    row, _ = chips(36, 236, p["chips"], t, size=14, gap=8, max_x=w - 24)
+    row, _ = chips(36, 236, p["chips"], t, size=14, gap=8, max_x=w - 24, with_icons=False)
     b.append(row)
     return svg(w, h, "".join(b), f'{p["title"]}: {" ".join(p["lines"])}')
 
@@ -249,11 +309,38 @@ def stack(t) -> str:
     b = [f'<rect width="{w}" height="{h}" rx="16" fill="{t["card"]}" stroke="{t["border"]}"/>']
     for i, (group, items) in enumerate(STACK):
         y = top + i * row_h
-        row, _ = chips(240, y, items, t, size=17, gap=12)
+        row, _ = chips(260, y, items, t, size=17, gap=12)
         b.append(f'<g class="in" style="--delay:{i * 0.12:.2f}s">')
-        b.append(text(56, y + 28, group, 18, t["muted"], MONO))
+        b.append(icon(GROUP_ICONS[group], 56, y + 7, 22, t["accent"]))
+        b.append(text(92, y + 28, group, 18, t["muted"], MONO))
         b.append(row + "</g>")
     return svg(w, h, "".join(b), "Стек: " + "; ".join(f"{g}: {', '.join(i)}" for g, i in STACK))
+
+
+def about(t) -> str:
+    w, h = 1200, 330
+    b = [f'<rect width="{w}" height="{h}" rx="16" fill="{t["card"]}" stroke="{t["border"]}"/>']
+    b.append(text(56, 64, "ОБО МНЕ", 16, t["accent"], MONO, weight=600, spacing=2))
+    b.append(text(56, 116, ABOUT["title"], 36, t["text"], weight=700))
+    for i, line in enumerate(ABOUT["lines"]):
+        b.append(text(56, 170 + i * 34, line, 21, t["muted"]))
+    # Правая колонка с фактами, отделённая линией.
+    b.append(f'<path d="M800 48V{h - 48}" stroke="{t["border"]}" stroke-width="1.5"/>')
+    for i, (ic, label) in enumerate(ABOUT["facts"]):
+        y = 74 + i * 58
+        b.append(f'<g class="in" style="--delay:{0.1 + i * 0.12:.2f}s">')
+        b.append(f'<rect x="840" y="{y - 6}" width="44" height="44" rx="10" fill="{t["bg"]}" stroke="{t["border"]}"/>')
+        b.append(icon(ic, 851, y + 5, 22, t["accent"]))
+        b.append(text(904, y + 23, label, 20, t["text"]) + "</g>")
+    return svg(w, h, "".join(b), "Обо мне: " + " ".join(ABOUT["lines"]))
+
+
+def contact(ic, label, t) -> str:
+    w, h = 40 + 26 + len(label) * 17 * MONO_CHAR + 28, 52
+    b = [f'<rect x="1" y="1" width="{w - 2:.0f}" height="{h - 2}" rx="10" fill="{t["card"]}" stroke="{t["border"]}" stroke-width="1.5"/>']
+    b.append(icon(ic, 20, 15, 22, t["accent"]))
+    b.append(text(56, 32, label, 17, t["text"], MONO))
+    return svg(round(w), h, "".join(b), label)
 
 
 def main() -> None:
@@ -261,6 +348,9 @@ def main() -> None:
     for name, t in THEMES.items():
         (ASSETS / f"header-{name}.svg").write_text(header(t), encoding="utf-8")
         (ASSETS / f"stack-{name}.svg").write_text(stack(t), encoding="utf-8")
+        (ASSETS / f"about-{name}.svg").write_text(about(t), encoding="utf-8")
+        for slug, ic, label in CONTACTS:
+            (ASSETS / f"contact-{slug}-{name}.svg").write_text(contact(ic, label, t), encoding="utf-8")
         for p in PROJECTS:
             (ASSETS / f'project-{p["slug"]}-{name}.svg').write_text(card(p, t), encoding="utf-8")
     print("assets written to", ASSETS)
