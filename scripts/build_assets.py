@@ -41,6 +41,8 @@ PROJECTS = [
         "slug": "smip-platform",
         "label": "КОММЕРЧЕСКИЙ · BACKEND",
         "title": "SMIP Platform",
+        "link": "smip.site",
+        "live": True,
         "lines": [
             "SaaS-аналитика для контент-команд.",
             "REST API, JWT с ротацией refresh-сессий,",
@@ -52,6 +54,8 @@ PROJECTS = [
         "slug": "smip-bot",
         "label": "КОММЕРЧЕСКИЙ · BOT + ADMIN",
         "title": "SMIP Bot & Admin",
+        "link": "smip.site",
+        "live": True,
         "lines": [
             "Telegram-бот и админка для работы с блогерами:",
             "KPI-планы, статистика, отчёты,",
@@ -63,6 +67,8 @@ PROJECTS = [
         "slug": "bresler",
         "label": "КОММЕРЧЕСКИЙ · WEB",
         "title": "bresler.ru",
+        "link": "bresler.ru",
+        "live": True,
         "lines": [
             "Перенос корпоративного сайта на новый стек:",
             "API каталога, новостей, поиска и форм,",
@@ -74,6 +80,7 @@ PROJECTS = [
         "slug": "bank-widget",
         "label": "УЧЕБНЫЙ · PYTHON",
         "title": "Bank Widget",
+        "link": "GitHub",
         "lines": [
             "Обработка банковских операций: маски карт,",
             "фильтры и поиск, чтение CSV/Excel,",
@@ -94,11 +101,50 @@ STACK = [
 ]
 
 
+# Анимации живут внутри SVG: GitHub проигрывает их и в <img>.
+# При prefers-reduced-motion всё замирает.
+CSS = """
+.ring{transform-box:fill-box;transform-origin:center;animation:ring 2.2s ease-out infinite}
+.ring.d{animation-delay:1.1s}
+@keyframes ring{0%{transform:scale(1);opacity:.85}100%{transform:scale(3.2);opacity:0}}
+.flow{stroke-dasharray:6 7;animation:flow 1.1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-13}}
+.packet{offset-rotate:0deg;opacity:0;animation:move var(--dur,2.6s) cubic-bezier(.5,0,.5,1) infinite;animation-delay:var(--delay,0s)}
+@keyframes move{0%{offset-distance:0%;opacity:0}12%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+.halo{animation:halo 2.6s ease-in-out infinite}
+@keyframes halo{0%,100%{opacity:.15}50%{opacity:.6}}
+.cursor{animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.shine{animation:shine 3.6s ease-in-out infinite}
+@keyframes shine{0%{transform:translateY(-120px);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(320px);opacity:0}}
+.in{opacity:0;animation:in .6s ease-out forwards;animation-delay:var(--delay,0s)}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.in{opacity:1}.packet{opacity:0}}
+"""
+
+
 def svg(width: int, height: int, body: str, title: str) -> str:
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}" role="img" aria-label="{escape(title)}">'
-        f"<title>{escape(title)}</title>{body}</svg>\n"
+        f"<title>{escape(title)}</title><style>{CSS}</style>{body}</svg>\n"
+    )
+
+
+def pulse(cx, cy, color, r=6) -> str:
+    """Точка «в работе» с расходящимися кольцами."""
+    return (
+        f'<circle class="ring" cx="{cx:.0f}" cy="{cy}" r="{r}" fill="none" stroke="{color}" stroke-width="2"/>'
+        f'<circle class="ring d" cx="{cx:.0f}" cy="{cy}" r="{r}" fill="none" stroke="{color}" stroke-width="2"/>'
+        f'<circle cx="{cx:.0f}" cy="{cy}" r="{r}" fill="{color}"/>'
+    )
+
+
+def packet(path, color, dur=2.6, delay=0.0) -> str:
+    """Бегущий по стрелке «пакет данных»."""
+    return (
+        f'<circle class="packet" r="4.5" fill="{color}" '
+        f"style=\"offset-path:path('{path}');--dur:{dur}s;--delay:{delay}s\"/>"
     )
 
 
@@ -130,6 +176,7 @@ def header(t) -> str:
     w, h = 1200, 320
     b = [f'<rect width="{w}" height="{h}" rx="16" fill="{t["card"]}" stroke="{t["border"]}"/>']
     b.append(text(56, 76, "~/treyzar", 20, t["muted"], MONO))
+    b.append(f'<rect class="cursor" x="{56 + 9 * 20 * MONO_CHAR + 6:.0f}" y="60" width="11" height="21" fill="{t["accent"]}"/>')
     b.append(text(56, 150, "Ivan · treyzar", 64, t["text"], weight=700))
     b.append(f'<rect x="56" y="176" width="56" height="4" rx="2" fill="{t["accent"]}"/>')
     b.append(text(56, 222, "Python Backend Developer", 30, t["accent"], weight=600))
@@ -150,16 +197,26 @@ def header(t) -> str:
         f'<path d="M0 0L10 5L0 10z" fill="{arrow}"/></marker></defs>'
     )
     api, api_r = node(700, 70, "FastAPI", accent=True)
+    b.append(
+        f'<rect class="halo" x="694" y="64" width="{api_r - 700 + 12:.0f}" height="56" rx="12" '
+        f'fill="none" stroke="{t["accent"]}" stroke-width="3"/>'
+    )
     mq, mq_r = node(api_r + 56, 70, "RabbitMQ")
     pg, pg_r = node(700, 196, "PostgreSQL")
     worker, worker_r = node(pg_r + 36, 196, "worker")
     ch, _ = node(worker_r + 40, 196, "ClickHouse")
     b += [api, mq, worker, pg, ch]
-    line = f'stroke="{arrow}" stroke-width="1.5" fill="none" marker-end="url(#a)"'
-    b.append(f'<path d="M{api_r + 4} 92H{api_r + 52}" {line}/>')
-    b.append(f'<path d="M740 118V192" {line}/>')
-    b.append(f'<path d="M{mq_r - 40} 118V156H{(pg_r + 36 + worker_r) / 2:.0f}V192" {line}/>')
-    b.append(f'<path d="M{worker_r + 4} 218H{worker_r + 36}" {line}/>')
+    line = f'class="flow" stroke="{arrow}" stroke-width="1.5" fill="none" marker-end="url(#a)"'
+    paths = [  # (путь, длительность, задержка) — пакеты идут по цепочке
+        (f"M{api_r + 4:.0f} 92H{api_r + 52:.0f}", 1.6, 0.0),
+        ("M740 118V192", 1.8, 0.9),
+        (f"M{mq_r - 40:.0f} 118V156H{(pg_r + 36 + worker_r) / 2:.0f}V192", 2.2, 1.4),
+        (f"M{worker_r + 4:.0f} 218H{worker_r + 36:.0f}", 1.4, 2.6),
+    ]
+    for d, dur, delay in paths:
+        b.append(f'<path d="{d}" {line}/>')
+        b.append(packet(d, t["accent"], dur, delay))
+    b.append(pulse(1144 - 19 * 17 * MONO_CHAR - 18, 284, t["accent"], r=5))
     b.append(text(1144, 290, "Чебоксары · BRESLER", 17, t["muted"], MONO, anchor="end"))
     return svg(w, h, "".join(b), "Ivan · treyzar — Python Backend Developer")
 
@@ -168,7 +225,14 @@ def card(p, t) -> str:
     w, h = 600, 300
     b = [f'<rect x="1" y="1" width="{w - 2}" height="{h - 2}" rx="14" fill="{t["card"]}" stroke="{t["border"]}" stroke-width="1.5"/>']
     b.append(f'<rect x="1" y="1" width="6" height="{h - 2}" rx="3" fill="{t["accent"]}"/>')
+    b.append(f'<clipPath id="bar"><rect x="1" y="1" width="6" height="{h - 2}" rx="3"/></clipPath>')
+    b.append(f'<g clip-path="url(#bar)"><rect class="shine" x="1" y="0" width="6" height="90" fill="{t["text"]}" opacity=".6"/></g>')
     b.append(text(36, 50, p["label"], 15, t["accent"], MONO, weight=600, spacing=1))
+    if p.get("link"):
+        label = p["link"] + " ↗"
+        b.append(text(w - 32, 50, label, 15, t["muted"], MONO, anchor="end"))
+        if p.get("live"):
+            b.append(pulse(w - 32 - len(label) * 15 * MONO_CHAR - 14, 45, t["accent"], r=4.5))
     b.append(text(36, 98, p["title"], 34, t["text"], weight=700))
     for i, line in enumerate(p["lines"]):
         b.append(text(36, 140 + i * 28, line, 19, t["muted"]))
@@ -184,9 +248,10 @@ def stack(t) -> str:
     b = [f'<rect width="{w}" height="{h}" rx="16" fill="{t["card"]}" stroke="{t["border"]}"/>']
     for i, (group, items) in enumerate(STACK):
         y = top + i * row_h
-        b.append(text(56, y + 28, group, 18, t["muted"], MONO))
         row, _ = chips(240, y, items, t, size=17, gap=12)
-        b.append(row)
+        b.append(f'<g class="in" style="--delay:{i * 0.12:.2f}s">')
+        b.append(text(56, y + 28, group, 18, t["muted"], MONO))
+        b.append(row + "</g>")
     return svg(w, h, "".join(b), "Стек: " + "; ".join(f"{g}: {', '.join(i)}" for g, i in STACK))
 
 

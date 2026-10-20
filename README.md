@@ -13,14 +13,18 @@ Python-разработчик, пишу бэкенд для коммерческ
 
 ### Проекты
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/project-smip-platform-dark.svg" />
-  <img src="assets/project-smip-platform-light.svg" width="49%" alt="SMIP Platform — SaaS-аналитика для контент-команд, FastAPI, PostgreSQL, ClickHouse, RabbitMQ" />
-</picture>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/project-smip-bot-dark.svg" />
-  <img src="assets/project-smip-bot-light.svg" width="49%" alt="SMIP Bot &amp; Admin — Telegram-бот и Django-админка, aiogram 3, Celery" />
-</picture>
+<a href="https://smip.site">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/project-smip-platform-dark.svg" />
+    <img src="assets/project-smip-platform-light.svg" width="49%" alt="SMIP Platform — SaaS-аналитика для контент-команд, FastAPI, PostgreSQL, ClickHouse, RabbitMQ" />
+  </picture>
+</a>
+<a href="https://smip.site">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/project-smip-bot-dark.svg" />
+    <img src="assets/project-smip-bot-light.svg" width="49%" alt="SMIP Bot &amp; Admin — Telegram-бот и Django-админка, aiogram 3, Celery" />
+  </picture>
+</a>
 <a href="https://www.bresler.ru/">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/project-bresler-dark.svg" />
