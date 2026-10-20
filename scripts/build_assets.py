@@ -216,8 +216,9 @@ def header(t) -> str:
     for d, dur, delay in paths:
         b.append(f'<path d="{d}" {line}/>')
         b.append(packet(d, t["accent"], dur, delay))
-    b.append(pulse(1144 - 19 * 17 * MONO_CHAR - 18, 284, t["accent"], r=5))
-    b.append(text(1144, 290, "Чебоксары · BRESLER", 17, t["muted"], MONO, anchor="end"))
+    place = "Чебоксары · ArtInTech"
+    b.append(pulse(1144 - len(place) * 17 * MONO_CHAR - 18, 284, t["accent"], r=5))
+    b.append(text(1144, 290, place, 17, t["muted"], MONO, anchor="end"))
     return svg(w, h, "".join(b), "Ivan · treyzar — Python Backend Developer")
 
 
