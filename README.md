@@ -32,7 +32,7 @@
     <img src="assets/project-bresler-light.svg" width="49%" alt="bresler.ru — перенос корпоративного сайта на Django 5.2 и Django Ninja" />
   </picture>
 </a>
-<a href="https://github.com/treyzar/singularity_python_homework">
+<a href="https://github.com/treyzar/bank_widget">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/project-bank-widget-dark.svg" />
     <img src="assets/project-bank-widget-light.svg" width="49%" alt="Bank Widget — учебный проект по обработке банковских операций, Python, pandas, pytest" />
